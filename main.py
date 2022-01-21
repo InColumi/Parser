@@ -89,18 +89,15 @@ def delete_duplicate(list_dict):
     for key in unique_keys:
         new_list = []
         for item in list_dict:
-            #print(key, item, key in item)
             if key in item:
                 new_list.append(item[key])
         new_dict[key] = new_list
     return new_dict
 
 def get_raw_data(pages):
-    print(len(pages))
     list_dictionaty_without_duplicate = []
     count = 0
     for key in pages.keys():
-        print(count, key)
         for item in pages[key]:
             list_dictionary = get_list_dictionary(item)
             list_dictionaty_without_duplicate.append(delete_duplicate(list_dictionary))
@@ -127,12 +124,17 @@ def create_csv(name, data):
                     for title in i['Title']:
                         writer.writerow([contributor, title])
 
+def main():
+    print("hey there")
+    url = "https://www.gutenberg.org/browse/authors/a"
+    page = get_text_html(url)
 
+    # pages = get_pages_by_author(page.find("div", {"class": "pgdbbyauthor"}).find('div').children)
+    pages = get_pages_by_author(page.find("div", {"class": "pgdbbyauthor"}).children)
 
-url = "https://www.gutenberg.org/browse/authors/a"
-page = get_text_html(url)
-pages = get_pages_by_author(page.find("div", {"class": "pgdbbyauthor"}).find('div').children)
+    get_linc_from_dict(pages)
+    raw_data = get_raw_data(pages)
+    create_csv('parsed_data.csv', raw_data)
 
-get_linc_from_dict(pages)
-raw_data = get_raw_data(pages)
-create_csv('parsed_data.csv', raw_data)
+if __name__ == "__main__":
+    main()
